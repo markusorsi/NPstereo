@@ -17,9 +17,9 @@ To replicate the results of our model, follow the instructions below.
 git clone https://github.com/reymond-group/NPstereo.git
 ```
 
-#### 2. Download the data/ and models/ directories from the Zenodo repository.
+#### 2. Download the data/ directory from the Zenodo repository.
 
-[Zenodo NPstereo repository](https://zenodo.org/record/5555555)
+[Zenodo NPstereo repository](https://zenodo.org/records/13790363)
 
 #### 3. Install the required conda environments using the following command:
 ```bash
