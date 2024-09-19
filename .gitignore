@@ -1,0 +1,46 @@
+# Ignore specific directories (they are on Zenodo)
+models/*
+!models/.gitkeep
+
+data/*
+!data/.gitkeep
+
+plots/
+
+# Ignore large files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.gz
+*.tar
+*.iso
+
+# Ignore IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore Python specific files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore environment and dependency files
+*.env
+*.virtualenv
+.env/
+venv/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
