@@ -1,11 +1,11 @@
 # Ignore specific directories (they are on Zenodo)
-models/*
-!models/.gitkeep
-
 data/*
 !data/.gitkeep
 
 plots/
+
+# Models
+*.pt
 
 # Ignore large files
 *.zip
