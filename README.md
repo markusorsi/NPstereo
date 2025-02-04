@@ -6,7 +6,7 @@ This repository contains the code and resources for predicting the absolute ster
 
 ## Theory
 
-The objective of our model is to predict the absolute configuration of natural products based on their absolute SMILES representations. We employ a transformer model implemented using OpenNMT to translate absolute SMILES into isomeric SMILES. Our dataset is derived from the latest version (09-2024) of the COCONUT database, which is the largest repository of natural products. The most effective model achieves an accuracy exceeding 85% and a per-stereocenter accuracy above 95%. The repository includes comprehensive code for data extraction, preprocessing, model training, and evaluation. However, the repository will be subject to updates and improvements in the near future.
+The objective of our model is to predict the absolute configuration of natural products based on their absolute SMILES representations. We employ a transformer model implemented using OpenNMT to translate absolute SMILES into isomeric SMILES. Our dataset is derived from the latest version (09-2024) of the COCONUT database, which is the largest repository of natural products. The most effective model achieves a per-stereocenter accuracy exceeding 80% on full assigments and a per-stereocenter accuracy above 85% for partial assignments. The repository includes comprehensive code for data extraction, preprocessing, model training, and evaluation. However, the repository will be subject to updates and improvements in the near future.
 
 ## Getting started
 

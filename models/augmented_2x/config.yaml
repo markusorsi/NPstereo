@@ -6,7 +6,7 @@ src_vocab: augmented_2x.vocab.src
 tgt_vocab: augmented_2x.vocab.tgt
 
 # Prevent overwriting existing files in the folder
-overwrite: False
+overwrite: True
 
 # Tensorboard 
 tensorboard: true
@@ -20,9 +20,6 @@ data:
     valid:
         path_src: ../../data/opennmt/augmented_2x/src-val.txt
         path_tgt: ../../data/opennmt/augmented_2x/tgt-val.txt
-    test: 
-        path_src: ../../data/opennmt/augmented_2x/src-test.txt
-        path_tgt: ../../data/opennmt/augmented_2x/tgt-test.txt
 
 # Vocabulary files that were just created
 src_vocab: augmented_2x.vocab.src
@@ -30,9 +27,9 @@ tgt_vocab: augmented_2x.vocab.tgt
 
 # General opts
 save_model: augmented_2x
-save_checkpoint_steps: 10000
-train_steps: 200000
-valid_steps: 10000
+save_checkpoint_steps: 25000
+train_steps: 100000
+valid_steps: 5000
 
 # Batching
 bucket_size: 262144
