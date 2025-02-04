@@ -6,7 +6,7 @@ src_vocab: not_augmented.vocab.src
 tgt_vocab: not_augmented.vocab.tgt
 
 # Prevent overwriting existing files in the folder
-overwrite: False
+overwrite: True
 
 # Tensorboard 
 tensorboard: true
@@ -20,9 +20,6 @@ data:
     valid:
         path_src: ../../data/opennmt/not_augmented/src-val.txt
         path_tgt: ../../data/opennmt/not_augmented/tgt-val.txt
-    test: 
-        path_src: ../../data/opennmt/not_augmented/src-test.txt
-        path_tgt: ../../data/opennmt/not_augmented/tgt-test.txt
 
 # Vocabulary files that were just created
 src_vocab: not_augmented.vocab.src
@@ -30,9 +27,9 @@ tgt_vocab: not_augmented.vocab.tgt
 
 # General opts
 save_model: not_augmented
-save_checkpoint_steps: 10000
-train_steps: 200000
-valid_steps: 10000
+save_checkpoint_steps: 25000
+train_steps: 100000
+valid_steps: 5000
 
 # Batching
 bucket_size: 262144

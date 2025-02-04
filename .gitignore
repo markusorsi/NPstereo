@@ -3,6 +3,7 @@ data/*
 !data/.gitkeep
 
 plots/
+archive/
 
 # Models
 *.pt
