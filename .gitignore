@@ -1,6 +1,6 @@
 # Ignore specific directories (they are on Zenodo)
 data/*
-!data/.gitkeep
+!data/literature-dataset.xlsx.gitkeep
 
 plots/
 archive/
