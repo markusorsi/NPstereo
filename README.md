@@ -30,18 +30,24 @@ Since the TMAP package does not support Python versions >3.7 we create a separat
 
 #### 4. Run the code in the notebooks to reproduce the results.
 
+#### 5. Running on your own data. 
+
+You can run the predictions of NPstereo on your own data by downloading the NPstereo model (partial_augmented_5x) from the zenodo repository and placing it into the models directory. Then modify the literature-dataset.xlsx file to contain your wanted structures and run the code in the "09-new-assignments" notebook. Prediction time for the examples presented in the provided dataset is a few seconds. 
+
 ## Notebooks
 
 The notebooks are organized as follows:
 
-1. **01_extract_coconut**: Contains the SQL query to extract the dataset from the PostgreSQL dump and the preprocessing steps to clean up the dataset. 
-2. **02_augment_data**: Contains the code to augment the dataset via SMILES randomization.
-3. **03_prepare_dataset**: Contains the code to prepare the dataset in the format required by OpenNMT for training the model.
-4. **04_train**: Contains the code to train the transformer model using OpenNMT.
-5. **05_predict**: Contains the code to run the predictions on the test set.
-6. **06_evaluate**: Contains the code to evaluate the model's performance.
-7. **07_analysis**: Contains the code to generate the TMAP plots and the in-depth analysis of the model's performance.
-8. **08_validation**: Contains the code to run the predictions on a small set of manually curated compounds to validate the model's performance.
+1. **01-dataset**: Contains the SQL query to extract the dataset from the PostgreSQL dump and the preprocessing steps to clean up the dataset. 
+2. **02-augment-data**: Contains the code to augment the dataset via SMILES randomization.
+3. **03-prepare-dataset**: Contains the code to prepare the dataset in the format required by OpenNMT for training the model.
+4. **04-train**: Contains the code to train the transformer model using OpenNMT. (this is a python script, not a notebook)
+5. **05-predict**: Contains the code to run the predictions on the test set.
+6. **06-evaluate**: Contains the code to evaluate the model's performance.
+7. **07-analysis**: Contains the code to generate the TMAP plots and the in-depth analysis of the model's performance.
+8. **08-partial-assignments**: Contains the code to run the predictions on a the set of incompletely assigned compounds in COCONUT.
+9. **09-new_assignments**: Contains the code to run the predictions on a small set of manually curated compounds to validate the model's performance.
+
 
 ## License
 [MIT](LICENSE)
