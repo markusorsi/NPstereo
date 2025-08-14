@@ -1,0 +1,7 @@
+augmentation,top1,top2,top3
+npstereo-canonical-partial,85.86 ± 0.10,92.20 ± 0.15,93.80 ± 0.13
+npstereo-randomized-partial,45.87 ± 1.37,55.78 ± 1.85,60.33 ± 1.84
+rp-canonical-partial,51.45 ± 0.40,67.86 ± 0.57,73.08 ± 0.63
+rp-randomized-partial,35.35 ± 1.24,47.10 ± 1.36,51.76 ± 1.45
+m65-canonical-partial,81.01 ± 0.43,90.35 ± 0.20,92.91 ± 0.15
+m65-randomized-partial,81.63 ± 0.54,90.64 ± 0.36,93.08 ± 0.30

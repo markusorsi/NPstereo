@@ -11,14 +11,17 @@ tqdm.pandas()
 
 ##### DATA PROCESSING #####
 
-def read_results(directory):
-    source = pd.read_csv(directory + 'src-test.txt', header=None, names=['source'])
-    target = pd.read_csv(directory + 'tgt-test.txt', header=None, names=['target'])
+def read_results(directory, n: int = None):
+    source = pd.read_csv(directory + 'src-test.txt', header=None, names=['source'], nrows=n)
+    target = pd.read_csv(directory + 'tgt-test.txt', header=None, names=['target'], nrows=n)
     df = pd.concat([source, target], axis=1)
 
     predictions = [[] for i in range(3)]
     with open(directory + 'pred-test.txt', 'r') as f:
-        for i, line in enumerate(f.readlines()):
+        lines = f.readlines()
+        if n is not None:
+            lines = lines[:n*3]
+        for i, line in enumerate(lines):
             predictions[i % 3].append(line.strip())
 
     for i in range(3):
@@ -26,6 +29,7 @@ def read_results(directory):
 
     df = df.apply(lambda x: x.str.replace(' ', ''))
     return df
+
 
 def flatten(smiles):
     substitutions = {
@@ -51,6 +55,50 @@ def flatten(smiles):
         smiles = re.sub(pattern, replacement, smiles)
 
     return smiles
+
+def add_stereocenters(smiles: str, cap: int = 11) -> int:
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return 0
+
+    unassigned = sum(
+        1 for info in Chem.FindPotentialStereo(mol)
+    )
+    
+    return unassigned
+
+def add_unassigned_stereocenters(smiles: str, cap: int = 11) -> int:
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return 0
+
+    unassigned = sum(
+        1 for info in Chem.FindPotentialStereo(mol)
+        if info.specified == Chem.StereoSpecified.Unspecified
+    )
+    
+    return min(unassigned, cap)
+
+def add_chemical_class(df: pd.DataFrame, reference: pd.DataFrame, class_column: str = "chemical_class_new", fallback: str = "Other") -> pd.DataFrame:
+
+    df = df.copy()
+    df["absolute_smiles"] = df["source"].apply(
+        lambda s: Chem.MolToSmiles(
+            Chem.MolFromSmiles(s),
+            isomericSmiles=False, canonical=True)
+    )
+
+    df = df.merge(
+        reference[["absolute_smiles", class_column]],
+        on="absolute_smiles", how="left"
+    )
+
+    if fallback is not None:
+        df[class_column].fillna(fallback, inplace=True)
+
+    return df
 
 ##### SMILES VALIDITY #####
 
@@ -208,9 +256,7 @@ def partial_per_stereocenter_accuracy(directories):
 
 ##### ACCURACIES FOR PLOTTING #####
 
-def get_accuracies(directory): 
-
-    df = read_results(f'data/opennmt/{directory}/')
+def get_accuracies(df): 
 
     df['top1'] = (df['target'] == df['beam_1']).astype(int)
     df['top2'] = ((df['target'] == df['beam_1']) | (df['target'] == df['beam_2'])).astype(int)
@@ -234,14 +280,16 @@ def get_accuracies(directory):
         'top3': 'max',
         'top1_wt': 'max',
         'top2_wt': 'max',
-        'top3_wt': 'max'
+        'top3_wt': 'max',
+        'num_stereocenters': 'first',
+        'num_unassigned': 'first',
+        'chemical_class_new': 'first',
     }).reset_index()
 
     return grouped_df
 
-def get_partial_accuracies(directory):
+def get_partial_accuracies(df):
     
-    df = read_results(f'data/opennmt/{directory}/')
     df['flattened'] = df['source'].apply(flatten)
     flattened_to_targets = df.groupby('flattened')['target'].apply(list).to_dict()
     
@@ -274,36 +322,15 @@ def get_partial_accuracies(directory):
         'top3': 'max',
         'top1_wt': 'max',
         'top2_wt': 'max',
-        'top3_wt': 'max'
+        'top3_wt': 'max',
+        'num_stereocenters': 'first',
+        'num_unassigned': 'first',
+        'chemical_class_new': 'first',
     }).reset_index()
 
     return grouped_df
 
 ##### SUMMARIZING ACCURACIES #####
-
-def stereocenter_accuracies(df): 
-    accuracies = {  'top1': [],
-                    'top2': [],
-                    'top3': [],
-                    'top1_wt': [],
-                    'top2_wt': [],
-                    'top3_wt': []
-                  }
-    categories = np.sort(df['#stereo'].unique())
-    for category in categories: 
-        df_cat = df[df['#stereo'] == category]
-        accuracies['top1'].append(df_cat['top1'].mean())
-        accuracies['top2'].append(df_cat['top2'].mean())
-        accuracies['top3'].append(df_cat['top3'].mean())
-        accuracies['top1_wt'].append(df_cat['top1_wt'].mean())
-        accuracies['top2_wt'].append(df_cat['top2_wt'].mean())
-        accuracies['top3_wt'].append(df_cat['top3_wt'].mean())
-    
-    accuracies = pd.DataFrame(accuracies)
-    accuracies.index = categories
-    accuracies = accuracies.sort_index()
-    accuracies = accuracies.round(2)
-    return accuracies
 
 def unassigned_accuracies(df): 
     accuracies = {  'top1': [],
@@ -313,9 +340,9 @@ def unassigned_accuracies(df):
                     'top2_wt': [],
                     'top3_wt': []
                   }
-    categories = np.sort(df['#unassigned'].unique())
+    categories = np.sort(df['num_unassigned'].unique())
     for category in categories: 
-        df_cat = df[df['#unassigned'] == category]
+        df_cat = df[df['num_unassigned'] == category]
         accuracies['top1'].append(df_cat['top1'].mean())
         accuracies['top2'].append(df_cat['top2'].mean())
         accuracies['top3'].append(df_cat['top3'].mean())
@@ -342,7 +369,7 @@ def chemical_class_accuracies(df):
     categories = np.sort(df['chemical_class_new'].astype(str).unique())
     
     for category in categories: 
-        df_cat = df[(df['chemical_class_new'].astype(str) == category) & (df['#stereo'] != 0)]
+        df_cat = df[(df['chemical_class_new'].astype(str) == category) & (df['num_stereocenters'] != 0)]
         accuracies['top1'].append(df_cat['top1'].mean())
         accuracies['top2'].append(df_cat['top2'].mean())
         accuracies['top3'].append(df_cat['top3'].mean())

@@ -1,0 +1,21 @@
+augmentation,validity_pct
+c1-canonical,99.83 ± 0.04
+c1-randomized,81.53 ± 0.60
+r1-canonical,99.88 ± 0.03
+r1-randomized,80.77 ± 0.29
+a2-canonical,99.83 ± 0.03
+a2-randomized,80.00 ± 0.42
+a5-canonical,99.81 ± 0.07
+a5-randomized,80.00 ± 0.40
+a10-canonical,99.84 ± 0.03
+a10-randomized,79.97 ± 0.45
+a20-canonical,99.81 ± 0.04
+a20-randomized,80.05 ± 0.38
+a50-canonical,99.86 ± 0.03
+a50-randomized,80.04 ± 0.41
+npstereo-canonical,99.85 ± 0.02
+npstereo-randomized,81.02 ± 0.24
+rp-canonical,99.86 ± 0.01
+rp-randomized,80.46 ± 0.65
+m65-canonical,99.84 ± 0.03
+m65-randomized,80.02 ± 0.40
