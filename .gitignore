@@ -1,9 +1,15 @@
 # Ignore specific directories (they are on Zenodo)
 data/*
-!data/literature-dataset.xlsx.gitkeep
+!data/.gitkeep
 
-plots/
-archive/
+plots/*
+!plots/.gitkeep
+
+predictions/*
+!predictions/.gitkeep
+
+results/*
+!results/.gitkeep
 
 # Models
 *.pt
