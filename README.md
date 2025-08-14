@@ -1,53 +1,92 @@
 # **NPstereo**
 
-This repository contains the code and resources for predicting the absolute stereochemistry of natural products (NPs) using a transformer-based model. The models are trained to accurately predict stereocenters from the absolute SMILES representation of a chemical compound.
-
 <img src="https://img.shields.io/badge/Python-3.11-blue?style=flat-square"/> <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/>
 
-## Theory
+**Assigning the Stereochemistry of Natural Products by Machine Learning**
 
-The objective of our model is to predict the absolute configuration of natural products based on their absolute SMILES representations. We employ a transformer model implemented using OpenNMT to translate absolute SMILES into isomeric SMILES. Our dataset is derived from the latest version (09-2024) of the COCONUT database, which is the largest repository of natural products. The most effective model achieves a per-stereocenter accuracy exceeding 80% on full assigments and a per-stereocenter accuracy above 85% for partial assignments. The repository includes comprehensive code for data extraction, preprocessing, model training, and evaluation. However, the repository will be subject to updates and improvements in the near future.
+NPstereo is a transformer-based language model that assigns stereochemistry (tetrahedral R/S, double bond E/Z) to natural products (NPs) from their SMILES representations. It was trained on referenced data from the open-access [COCONUT database](https://coconut.naturalproducts.net) and can complete missing stereocenters in partially assigned or fully unassigned NP structures.
 
-## Getting started
+This repository contains:
+- Data extraction and augmentation scripts
+- Model training and evaluation code
+- Utilities for running predictions on new molecules
 
-To replicate the results of our model, follow the instructions below.
+## Overview
+Nature shows strong stereochemical regularities — L-amino acids in proteins, D-sugars in nucleotides. The idea of NPstereo is to investigate whether similar patterns exist in other NPs and whether they can be machine-learned.
 
-#### 1. Clone the repository
+**Key features:**
+- Predicts stereochemistry directly from SMILES
+- Supports **full assignment** and **completion of partially assigned stereochemistry**
+- Achieves **80.2% per-stereocenter accuracy** for full assignment and **85.9%** for partial assignment on canonical SMILES
+- Works across diverse NP classes (alkaloids, polyketides, lipids, terpenes, peptides, glycosides, etc.)
+
+For details, see the manuscript!
+
+## Installation
+
+Clone the repository:
 ```bash
 git clone https://github.com/reymond-group/NPstereo.git
+cd NPstereo
 ```
 
-#### 2. Download the data/ directory from the Zenodo repository.
-
-[Zenodo NPstereo repository](https://zenodo.org/records/13790363)
-
-#### 3. Install the required conda environments using the following command:
+Create and activate a conda environment:
 ```bash
-conda env create -f npstereo.yml
-conda env create -f npstereotmap.yml
+conda create -n npstereo python=3.10
+conda activate npstereo
 ```
-Since the TMAP package does not support Python versions >3.7 we create a separate environment for notebooks that generate the TMAP plots.
 
-#### 4. Run the code in the notebooks to reproduce the results.
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-#### 5. Running on your own data. 
+## Data
+Training and evaluation data are derived from the **COCONUT** database, filtered for entries with at least one DOI reference.  
+We include:
+- Scripts to extract and process the dataset (`data/`)
+- Data augmentation methods:
+  - **SMILES randomization**
+  - **Partial stereochemistry removal**
+- Download links to processed datasets on [Zenodo](https://zenodo.org/records/13790363). This data is too heavy to include on GitHub, however following the code you should be able to reproduce the dataset from scratch.
 
-You can run the predictions of NPstereo on your own data by downloading the NPstereo model (partial_augmented_5x) from the zenodo repository and placing it into the models directory. Then modify the literature-dataset.xlsx file to contain your wanted structures and run the code in the "09-new-assignments" notebook. Prediction time for the examples presented in the provided dataset is a few seconds. 
+## Model Training
+Models are trained using [OpenNMT-py](https://opennmt.net/OpenNMT-py/):
 
-## Notebooks
+Example training command:
+```bash
+onmt_build_vocab -config configs/npstereo.yaml -n_sample -1
+onmt_train -config configs/npstereo.yaml
+```
 
-The notebooks are organized as follows:
+Key architectures:
+- **C1** – baseline (canonical SMILES only)
+- **A2–A50** – canonical + randomized SMILES
+- **NPstereo** – partially assigned → canonical
+- **M65** – combined augmentation (randomization + partial assignment)
 
-1. **01-dataset**: Contains the SQL query to extract the dataset from the PostgreSQL dump and the preprocessing steps to clean up the dataset. 
-2. **02-augment-data**: Contains the code to augment the dataset via SMILES randomization.
-3. **03-prepare-dataset**: Contains the code to prepare the dataset in the format required by OpenNMT for training the model.
-4. **04-train**: Contains the code to train the transformer model using OpenNMT. (this is a python script, not a notebook)
-5. **05-predict**: Contains the code to run the predictions on the test set.
-6. **06-evaluate**: Contains the code to evaluate the model's performance.
-7. **07-analysis**: Contains the code to generate the TMAP plots and the in-depth analysis of the model's performance.
-8. **08-partial-assignments**: Contains the code to run the predictions on a the set of incompletely assigned compounds in COCONUT.
-9. **09-new_assignments**: Contains the code to run the predictions on a small set of manually curated compounds to validate the model's performance.
+## Running Predictions
 
+To predict stereochemistry for new molecules:
+```bash
+python predict.py   --model seed-0/npstereo/npstereo_step_100000.pt   --src input_smiles.txt   --output predictions.txt
+```
+
+**Input:** SMILES without full stereochemistry (absolute or partially assigned).  
+**Output:** Predicted isomeric SMILES with stereochemistry assigned.
+
+For best performance:
+- Use **canonical SMILES** as input for NPstereo
+- For non-canonical SMILES, use models trained with randomization (A50 or M65)
+
+## Evaluation
+
+We provide evaluation scripts in `evaluation/` to reproduce the metrics reported in the manuscript:
+
+- **SMILES validity**
+- **Full-assignment accuracy**
+- **Per-stereocenter accuracy**
+- Class-wise breakdown by NP structural category
 
 ## License
 [MIT](LICENSE)
